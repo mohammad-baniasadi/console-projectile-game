@@ -1,13 +1,10 @@
-#include <iostream>
+#include <iostream>#include <iostream>
 #include <windows.h>
 #include <cmath>
-#include <fstream> //فایل
-//#include <rang.hpp>
-
+#include <fstream>
     using namespace std;
     #define WIN32_LEAN_AND_MEAN
     #define _USE_MATH_DEFINES
-    //using namespace rang;
 #define Row 13
 #define col 45
 #define STEP 0.2
@@ -20,12 +17,12 @@ enum LevelState
     WIN,
     LOSE,
 };
-struct Position //مختصات
+struct Position
 {
     int x;
     int y;
 };
-struct Player //پلیر
+struct Player
 {
     Position pos;
     char symbol = 'P';
@@ -45,7 +42,7 @@ struct Wall
 struct Projectile
 {
     Position pos;
-    Position v; // سرعت
+    Position v;
     bool active=true;
     char symbol = '*';
 };
@@ -58,7 +55,7 @@ struct Level
     int WallCount;
     int maxShots=10;
     int shotsFired = 0;
-    int parShots;    // شلیک استاندارد برای 3 ستاره
+    int parShots;    // Standard shot for three stars
     LevelState State;
 };
 struct GameProgress
@@ -68,11 +65,10 @@ struct GameProgress
     bool unlocked[3]={true,false,false};
 };
 
-//متغیرها
 GameProgress progress;
 char Grid[Row][col];
 
-//توابع
+//Functions
 void clearscreen();
 void SaveProgressToFile();
 void LoadProgressFromFile();
@@ -94,8 +90,8 @@ void RunLevel(Level &lvl, int levelIndex);
 void Projectile_Update(Projectile &p, Level &lvl);
 void Kill_Enemy(Level &lvl, int x, int y);
 bool allEnemiesDead(Level &lvl);
-void MainMenu();//منوی اصلی بازی 
-void LevelMenu();// منوی انتخاب لول بازی
+void MainMenu();
+void LevelMenu();
 void HowToPlayMenu();
 void ProgressStarsMenu();
 void Setup_Level_1(Level &lvl);
@@ -104,7 +100,6 @@ void Setup_Level_3(Level &lvl);
 void Level_1();
 void Level_2();
 void Level_3();
-
 
 int main ()
 {
@@ -137,7 +132,7 @@ void SaveProgressToFile()
         file.close();
     }
 }
-void PlayGround ()  //زمین خام بازی
+void PlayGround ()
 {
     for (int i=0;i<Row;i++)
     {   
@@ -232,7 +227,6 @@ void RunLevel(Level &lvl, int levelIndex)
     {
         cout << "YOU WIN!\n";
 
-        // محاسبه ستاره   
         int stars = 1;
         if (lvl.shotsFired <= lvl.parShots)
             stars = 3;
@@ -242,7 +236,6 @@ void RunLevel(Level &lvl, int levelIndex)
         progress.stars[levelIndex] = stars;
         progress.scores[levelIndex] = (lvl.maxShots - lvl.shotsFired + 1) * 100;
 
-        // باز کردن لول بعدی
         if (levelIndex < 2)
             progress.unlocked[levelIndex + 1] = true;
     }
@@ -293,9 +286,9 @@ int Get_Angle()
 Position V(int speed, int angle)
 {
     Position v;
-    double rad = angle * M_PI / 180.0;   //M_PI عدد پی است
+    double rad = angle * M_PI / 180.0;
     v.x = speed * cos(rad);
-    v.y = -speed * sin(rad); // منفی چون محور y رو به پایین است
+    v.y = -speed * sin(rad);
     return v;
 }
 void Move_Projectile(Projectile &P) 
@@ -372,9 +365,8 @@ bool allEnemiesDead(Level &lvl)
     return true;
 }
 
-
 //Menus
-void MainMenu()//منوی اصلی بازی 
+void MainMenu()
 {
     clearscreen();
     int choice;
@@ -410,7 +402,7 @@ void MainMenu()//منوی اصلی بازی
             MainMenu();
     }
 }
-void LevelMenu()// منوی انتخاب لول بازی
+void LevelMenu()
 {
     clearscreen();
     int choice;
@@ -455,7 +447,7 @@ void LevelMenu()// منوی انتخاب لول بازی
              LevelMenu();
     }
 }
-void HowToPlayMenu()  // این تابع رو باید دوباره بعد از ساخته شدن برنامه برسی و تصحیح کرد.
+void HowToPlayMenu()
 {
     clearscreen();
     int page = 1;
@@ -524,7 +516,6 @@ void ProgressStarsMenu()
             cout << "Level " << i+1 << ": ";
             if(progress.unlocked[i])
             {
-                // نمایش ستاره‌ها
                 cout << "[";
                 for(int j=0;j<3;j++)
                 {
@@ -562,7 +553,7 @@ void ProgressStarsMenu()
             {
                 progress.stars[i] = 0;
                 progress.scores[i] = 0;
-                progress.unlocked[i] = (i == 0); // فقط لول ۱ باز باشد
+                progress.unlocked[i] = (i == 0);
             }
             cout << "\nProgress reset! (Press Enter)";
             cin.ignore();
@@ -577,6 +568,7 @@ void ProgressStarsMenu()
     } while(true);
 }
 
+//Setup_Level
 void Setup_Level_1(Level &lvl)
 {
     lvl.State = RUNNING;
@@ -625,20 +617,20 @@ void Setup_Level_3(Level &lvl)
     lvl.player.pos = {2, Row - 2};
     
     lvl.enemyCount = 4;
-    lvl.enemies[0] = {{00,00}, 'E', true};
-    lvl.enemies[1] = {{00,00}, 'E', true};
-    lvl.enemies[2] = {{00,00}, 'E', true};
-    lvl.enemies[3] = {{00,00}, 'E', true};
+    lvl.enemies[0] = {{19,4}, 'E', true};
+    lvl.enemies[1] = {{21,8}, 'E', true};
+    lvl.enemies[2] = {{38,7}, 'E', true};
+    lvl.enemies[3] = {{40,10}, 'E', true};
 
     lvl.WallCount = 5;
-    lvl.walls[0] = {{00,00}, '#', true};
-    lvl.walls[1] = {{00,00}, '#', true};
-    lvl.walls[2] = {{00,00}, '#', true};
-    lvl.walls[3] = {{00,00}, '#', true};
-    lvl.walls[4] = {{00,00}, '#', true};
+    lvl.walls[0] = {{2,10}, '#', true};
+    lvl.walls[1] = {{19,5}, '#', true};
+    lvl.walls[2] = {{21,9}, '#', true};
+    lvl.walls[3] = {{38,8}, '#', true};
+    lvl.walls[4] = {{40,11}, '#', true};
 }
 
-
+//Level
 void Level_1 ()
 {
     Level lev_1;
@@ -660,3 +652,5 @@ void Level_3()
     Setup_Level_3(lev_3);
     RunLevel(lev_3, 2);
 }
+
+
